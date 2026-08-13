@@ -4,6 +4,9 @@ This repository holds the source code to start a basic Yamcs application that mo
 
 You may find it useful as a starting point for your own project.
 
+## Documentation
+Documentation for using and running the software tailored to the MBEP CDR are in `/documentation`.
+
 
 ## Prerequisites
 

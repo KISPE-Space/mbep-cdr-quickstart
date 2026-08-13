@@ -55,4 +55,3 @@ streamConfig:
   tc:
     - name: "tc_realtime"
       processor: "realtime"
-
