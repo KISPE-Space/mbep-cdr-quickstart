@@ -13,9 +13,9 @@ uint8_t handle_sp(uint8_t *in, spPacket *out){
     out->PacketVersionNumber = (in[i] >> 5) & 0x07;
     out->PacketType = (in[i] >> 4) & 0x01;
 
-    if (out->PacketType == 1){
-        tm_3_25_1.CMD_RCV_COUNT++;
-    }
+    // if (out->PacketType == 1){
+    //     tm_3_25_1.CMD_RCV_COUNT++;
+    // }
 
     out->SecondaryHeaderFlag = (in[i] >> 3) & 0x01;
     out->APID = ((in[i++] & 0x07) << 8 ) | in[i++];
@@ -42,11 +42,17 @@ uint8_t handle_pus_tc(uint8_t *in, pusTCPacket *out){
     uint16_t i = 0; // Index counter
 
     out->PUS_VersionNumber = (in[i] >> 4) & 0x0F;
+    /*
+        Temp counter Fix as YAMCS SP TC Header Incorrect 
+    */
+    if (out->PUS_VersionNumber == 1){
+        tm_3_25_1.CMD_RCV_COUNT++;
+    }
+
     //Ack Flags
     out->acknowledgement_flags = in[i++] & 0x0F;
     //Bit 1
     out->ack_flag.successful_acceptance_request = (out->acknowledgement_flags >> 3) & 0x01;
-    //printf("successful_acceptance_request %d \n" , out->ack_flag.successful_acceptance_request);
     //Bit 2
     out->ack_flag.successful_start_request = (out->acknowledgement_flags >> 2) & 0x01;
     //Bit 3
@@ -67,11 +73,33 @@ uint8_t handle_pus_tc(uint8_t *in, pusTCPacket *out){
             switch(out->message_subtype_ID){
                 case 1: //TC[2,1]
                     out->tc_data_length = 4 + 6;
-                    tc_2_1.N = (in[i++] << 8) | in[i++];
-                    tc_2_1.Address = (in[i++] << 8) | in[i++];
-                    tc_2_1.Value = (in[i++] << 8) | in[i++];
+                    // tc_2_1.N = (in[i++] << 8) | in[i++];
+                    // tc_2_1.Address = (in[i++] << 8) | in[i++];
+                    // tc_2_1.Value = (in[i++] << 8) | in[i++];
+                    
+                    tc_2_1.N = in[i++];
+                    tc_2_1.Address = (in[i++] << 24) | (in[i++] << 16) | (in[i++] << 8) | in[i++];
+                    
                     switch(tc_2_1.Address){
                         case 1:         //ADCS_PWR
+                                // TM[1,1] successful acceptance verification report
+                                if(out->ack_flag.successful_acceptance_request){
+                                    printf("TM[1,1] successful acceptance verification report\n");
+                                    //generate_tm_1_1(tc_frame.data);
+                                    //send_udp(&udp, TMFrameOut, TMFrameLength);
+                                }
+                                tm_3_25_1.CMD_ACC_CNT++;
+                                //TM[1,3] needs to be sent  
+                                //TM[1,5] needs to be sent 
+                                    
+                                printf("ADCS Power Toggle \n");
+
+                                //TM[1,7] successful completion of execution verification report
+                                if(out->ack_flag.successful_completion_request){
+                                    printf("TM[1,7] successful completion of execution verification report\n");
+                                    // generate_tm_1_7(tc_frame.data);
+                                    // send_udp(&udp, TMFrameOut, TMFrameLength);
+                                }
                             break;
                         case 2:         //EO_CAMERA
                             break;

@@ -87,9 +87,9 @@ For both an `Acceptance Request` and a `Compleition Request`. The `ack_flags` sh
 | Acceptance Request | Compleition Request | Binary | Decimal |
 | ------------------ | ------------------- | ------ | ------- |
 | 0                  | 0                   | 0000   | 0       |
-| 1                  | 0                   | 1000   | 6       |
+| 1                  | 0                   | 1000   | 8       |
 | 0                  | 1                   | 0001   | 1       |
-| 1                  | 1                   | 1001   | 7       |
+| 1                  | 1                   | 1001   | 9       |
 
 A history of Command send is saved and can be inspected by the user.
 ## Running the simulator
