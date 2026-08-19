@@ -1,0 +1,360 @@
+
+@page {
+    size: A4;
+    margin: 20mm 18mm 20mm 18mm;
+}
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+    font-size: 10.5pt;
+    line-height: 1.6;
+
+    color: #2e3338;
+    background: white;
+
+    max-width: 100%;
+}
+
+/* ---------- Headings ---------- */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 600;
+    line-height: 1.25;
+    color: #20242a;
+
+    page-break-after: avoid;
+}
+
+h1 {
+    font-size: 2em;
+    margin-top: 0;
+    margin-bottom: 0.8em;
+
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.3em;
+}
+
+h2 {
+    font-size: 1.6em;
+    margin-top: 1.8em;
+    margin-bottom: 0.7em;
+}
+
+h3 {
+    font-size: 1.3em;
+    margin-top: 1.5em;
+    margin-bottom: 0.6em;
+}
+
+h4 {
+    font-size: 1.1em;
+    margin-top: 1.3em;
+}
+
+h5,
+h6 {
+    font-size: 1em;
+    margin-top: 1.2em;
+}
+
+/* ---------- Paragraphs ---------- */
+
+p {
+    margin-top: 0;
+    margin-bottom: 0.9em;
+}
+
+/* ---------- Links ---------- */
+
+a {
+    color: #7057d9;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ---------- Images ---------- */
+
+/* img {
+    display: block;
+
+    max-width: 85%;
+    height: auto;
+
+    margin: 1.2em auto;
+
+    page-break-inside: avoid;
+} */
+
+img {
+    display: block;
+    max-width: 80%;
+    height: auto;
+    margin: 1.2em auto;
+    page-break-inside: avoid;
+}
+
+/* Larger images can use:
+ *
+ * ![image](image.png)
+ *
+ * and will automatically be centred.
+ */
+
+
+/* ---------- Tables ---------- */
+
+table {
+    width: 100%;
+
+    margin: 1.2em 0 1.5em 0;
+
+    border-collapse: collapse;
+    border-spacing: 0;
+
+    font-size: 0.95em;
+
+    page-break-inside: avoid;
+}
+
+thead {
+    display: table-header-group;
+}
+
+tbody {
+    display: table-row-group;
+}
+
+th,
+td {
+    padding: 7px 10px;
+
+    border: 1px solid #d9d9d9;
+
+    text-align: left;
+
+    vertical-align: top;
+}
+
+th {
+    font-weight: 600;
+
+    background-color: #f3f3f3;
+
+    color: #20242a;
+}
+
+tr:nth-child(even) td {
+    background-color: #fafafa;
+}
+
+/* Prevent ugly splitting of table rows */
+
+tr {
+    page-break-inside: avoid;
+}
+
+/* ---------- Code ---------- */
+
+code {
+    font-family:
+        "SFMono-Regular",
+        Consolas,
+        "Liberation Mono",
+        Menlo,
+        monospace;
+
+    font-size: 0.9em;
+    color: #FF3E00;
+
+    background-color: #f1f1f1;
+
+    padding: 0.15em 0.35em;
+
+    border-radius: 4px;
+}
+
+pre {
+    background-color: #f6f6f6;
+
+    border: 1px solid #e1e1e1;
+    border-radius: 6px;
+
+    padding: 12px 14px;
+
+    overflow-x: auto;
+
+    font-size: 0.88em;
+    line-height: 1.5;
+
+    page-break-inside: avoid;
+}
+
+pre code {
+    background: none;
+    padding: 0;
+
+    font-size: inherit;
+}
+
+/* ---------- Blockquotes ---------- */
+
+blockquote {
+    margin: 1em 0;
+
+    padding: 0.5em 1em;
+
+    border-left: 4px solid #aaa;
+
+    color: #666;
+
+    background-color: #f8f8f8;
+}
+
+blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+/* ---------- Lists ---------- */
+
+ul,
+ol {
+    margin-top: 0.3em;
+    margin-bottom: 1em;
+
+    padding-left: 1.8em;
+}
+
+li {
+    margin-bottom: 0.25em;
+}
+
+/* ---------- Horizontal rules ---------- */
+
+hr {
+    border: none;
+
+    border-top: 1px solid #ddd;
+
+    margin: 2em 0;
+}
+
+/* ---------- Strong / emphasis ---------- */
+
+strong {
+    font-weight: 600;
+}
+
+em {
+    font-style: italic;
+}
+
+/* ---------- Task lists ---------- */
+
+input[type="checkbox"] {
+    margin-right: 0.4em;
+}
+
+/* ---------- Page breaking ---------- */
+
+/* Keep headings with the content following them */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    page-break-after: avoid;
+}
+
+/* Avoid splitting images */
+
+figure {
+    page-break-inside: avoid;
+}
+
+/* Avoid splitting code blocks */
+
+pre {
+    page-break-inside: avoid;
+}
+
+/* ---------- Tables ---------- */
+
+table {
+    page-break-before: auto;
+    page-break-after: auto;
+}
+
+/* ---------- Print cleanup ---------- */
+
+@media print {
+    body {
+        color: #2e3338;
+        background: white;
+    }
+
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+}
+
+
+
+
+
+
+
+/* Inline code */
+.markdown-body code {
+    color: #FF3E00 !important;
+    background-color: #f1f1f1 !important;
+}
+
+/* Inline code inside paragraphs/lists/etc. */
+p code,
+li code,
+td code,
+th code {
+    color: #FF3E00 !important;
+    background-color: #f1f1f1 !important;
+}
+
+/* Override syntax highlighting tokens */
+code .hljs,
+code .hljs-keyword,
+code .hljs-string,
+code .hljs-title,
+code .hljs-name,
+code .hljs-attr,
+code .hljs-built_in,
+code .hljs-literal,
+code .hljs-number,
+code .hljs-variable,
+code .hljs-symbol,
+code .hljs-meta,
+code .hljs-type {
+    color: #4a4a4a !important;
+}
+
+.page-break {
+    page-break-before: always;
+    break-before: page;
+}

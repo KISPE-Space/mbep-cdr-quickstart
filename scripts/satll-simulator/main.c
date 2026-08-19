@@ -49,6 +49,7 @@ int udp_data_length;
 
 
 int main(){
+    setbuf(stdout, NULL);
     timeStart = millis();
 
     simulator_init(); // Function call to set default values and Initialise Interfaces
