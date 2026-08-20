@@ -6,7 +6,7 @@ set -o errexit
 REPO_URL="https://github.com/KISPE-Space/mbep-cdr-quickstart.git"
 BUNDLE_NAME="mbep-cdr-yamcs-0.0.1-CDR-bundle.tar.gz"
 
-REPO_DIR="${HOME}/egse" # Temporary Setup will adapt to taste
+REPO_DIR="/usr/local/egse" # Temporary Setup will adapt to taste
 
 # Must be run as root
 if [[ $EUID -ne 0 ]]; then
