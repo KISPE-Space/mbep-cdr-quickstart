@@ -8,6 +8,31 @@ BUNDLE_NAME="mbep-cdr-yamcs-0.0.1-CDR-bundle.tar.gz"
 
 REPO_DIR="${HOME}/egse" # Temporary Setup will adapt to taste
 
+# Must be run as root
+if [[ $EUID -ne 0 ]]; then
+	echo "Error: must be ran as root"
+	echo "Ubuntu: sudo $0"
+	echo "Debian: su- $0"
+	exit 1
+fi
+
+#
+#	Java JDK Dependency
+#
+
+source /etc/os-release
+
+if ! command -v javac >/dev/null 2>&1; then
+	echo "java JDK not found"
+	
+	apt-get install -y default-jdk
+else 
+	echo "Java JDK Already Installed"
+	javac -version
+fi
+
+
+
 
 #
 #   Adapted YAMCS Install
