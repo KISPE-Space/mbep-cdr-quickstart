@@ -57,11 +57,20 @@ dataLinks:
         initialValue: 0xFFFF
 
   - name: udp-out
+    # class: org.yamcs.tctm.UdpTcDataLink
+    # stream: tc_realtime
+    # host: localhost
+    # port: 10022
+    # # commandPostprocessorClassName: com.example.myproject.MyCommandPostprocessor
     class: org.yamcs.tctm.UdpTcDataLink
     stream: tc_realtime
     host: localhost
     port: 10022
-    # commandPostprocessorClassName: com.example.myproject.MyCommandPostprocessor
+    commandPostprocessorClassName: org.yamcs.tctm.GenericCommandPostprocessor
+    commandPostprocessorArgs:
+      errorDetection:
+        type: CRC-16-CCIIT
+        initialValue: 0xFFFF
 
 #TM Datalink
   - name: tm_realtime
