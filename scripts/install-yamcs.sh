@@ -4,7 +4,7 @@ set -o errexit
 
 #Variables
 REPO_URL="https://github.com/KISPE-Space/mbep-cdr-quickstart.git"
-BUNDLE_NAME="mbep-cdr-yamcs-0.0.1-CDR-bundle.tar.gz"
+BUNDLE_NAME="mbep-cdr-yamcs-0.0.2-CDR-bundle.tar.gz"
 
 REPO_DIR="/usr/local/egse" # Temporary Setup will adapt to taste
 

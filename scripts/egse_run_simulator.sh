@@ -3,7 +3,7 @@
 set -o errexit
 
 REPO_DIR="${HOME}/egse" # Temporary Setup will adapt to taste
-BUNDLE_NAME="mbep-cdr-yamcs-0.0.1-CDR"
+BUNDLE_NAME="mbep-cdr-yamcs-0.0.2-CDR"
 
 # Stopping any running instances of YAMCS
 # YAMCS Can only be ran as once instanve at a time due to shared resources

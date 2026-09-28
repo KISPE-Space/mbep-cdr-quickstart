@@ -31,7 +31,7 @@ limitations under the License.
 	xmlns:xtce="http://www.omg.org/spec/XTCE/20180204"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.omg.org/spec/XTCE/20180204 https://www.omg.org/spec/XTCE/20180204/SpaceSystem.xsd">
 	<xtce:LongDescription></xtce:LongDescription>
-	<xtce:Header validationStatus="Working" version="1.0" date="2026-08-11">
+	<xtce:Header validationStatus="Working" version="1.0" date="2026-08-24">
 	</xtce:Header>
 	<xtce:TelemetryMetaData>
 		<xtce:ParameterTypeSet>
@@ -66,17 +66,22 @@ limitations under the License.
 				<xtce:UnitSet/>
 				<xtce:IntegerDataEncoding sizeInBits="16"/>
 			</xtce:IntegerParameterType>
-			<xtce:AbsoluteTimeParameterType name="PUSTime" shortDescription="OPTIONAL PUS time">
-				<xtce:LongDescription>Each application process shall set the time field of each telemetry packet it generates to the time tag of the related report.</xtce:LongDescription>
-				
-                <xtce:Encoding>
-                    <xtce:IntegerDataEncoding sizeInBits="32" encoding="unsigned"/>
-                </xtce:Encoding>
-                
+			<!-- <xtce:AbsoluteTimeParameterType name="PUSTime" shortDescription="OPTIONAL PUS time">
+				<xtce:LongDescription>Each application process shall set the time field of each telemetry packet it generates to the time tag of the related report.</xtce:LongDescription>                
                 <xtce:ReferenceTime>
 					<xtce:Epoch>TAI</xtce:Epoch>
 				</xtce:ReferenceTime>
-			</xtce:AbsoluteTimeParameterType>
+                <xtce:AbsoluteTimeDataEncoding sizeInBits="56" />
+			<xtce:Encoding>
+            <xtce:BinaryDataEncoding sizeInBits="48"/>
+            </xtce:Encoding>
+            </xtce:AbsoluteTimeParameterType> -->
+
+            <xtce:IntegerParameterType name="PUSTime" signed="false" shortDescription="OPTIONAL PUS time">
+                <xtce:UnitSet/>
+                <xtce:IntegerDataEncoding sizeInBits="32" encoding="unsigned" byteOrder="mostSignificantByteFirst"/>
+            </xtce:IntegerParameterType>
+            
 			<xtce:BinaryParameterType name="PUSErrorControlFieldType" shortDescription="OPTIONAL PUS Error Control Field">
 				<xtce:LongDescription>The packet error control field transports an error detection code that can be used by the ground system to verify the integrity of the complete telemetry source packet. The presence of the PEC and its type (either a checksum or CRC) shall be fixed for the complete mission for each application process and defined by the mission constant "TM_CHECKSUM_TYPE".</xtce:LongDescription>
 				<xtce:UnitSet/>
@@ -1005,6 +1010,8 @@ limitations under the License.
 			<xtce:Parameter name="CCSDS_Packet_Sequence" parameterTypeRef="CCSDS_Packet_Sequence_Type"/>
 			<xtce:Parameter name="CCSDS_Packet_Length" parameterTypeRef="CCSDSPacketLengthType"/>
 			<xtce:Parameter name="PUS_Data_Field_Header" parameterTypeRef="PUS_Data_Field_Header_Type"/>
+
+            <!-- <xtce:Parameter name="PUS_Time" parameterTypeRef="PUSTime"/> -->
 			
             <xtce:Parameter name="1_2_packet_version_number" parameterTypeRef="Packet_Version_Number"/>
             <xtce:Parameter name="1_2_packet_type" parameterTypeRef="Packet_Type"/>
@@ -1222,6 +1229,7 @@ limitations under the License.
 				<xtce:EntryList>
 					<xtce:ParameterRefEntry parameterRef="PUS_Data_Field_Header"/>
 					<!-- this is where the PUS data field goes -->
+                    <!-- <xtce:ParameterRefEntry parameterRef="PUS_Time"/> -->
 					<!-- CRC removed due to lack of support in YAMCS for referenceLocation="containerEnd" -->
 					<!--<xtce:ParameterRefEntry parameterRef="PUS_Error_Control_Field">
 						<xtce:LocationInContainerInBits referenceLocation="containerEnd">
@@ -1992,7 +2000,8 @@ limitations under the License.
                 <xtce:RestrictionCriteria>
                     <xtce:ComparisonList>
             		    <xtce:Comparison value="Present" parameterRef="CCSDS_Packet_ID/SecHdrFlag"/>
-            		    <xtce:Comparison value="2" parameterRef="PUS_Data_Field_Header/Version"/>
+            		    <!-- <xtce:Comparison value="1" parameterRef="PUS_Data_Field_Header/Version"/> -->
+                        <xtce:Comparison value="2" parameterRef="PUS_Data_Field_Header/Version"/>
             		    <xtce:Comparison value="3" parameterRef="PUS_Data_Field_Header/Service"/>
             		    <xtce:Comparison value="25" parameterRef="PUS_Data_Field_Header/Subservice"/>
                     </xtce:ComparisonList>
@@ -2025,6 +2034,59 @@ limitations under the License.
 	</xtce:TelemetryMetaData>
 	<xtce:CommandMetaData>
 		<xtce:ArgumentTypeSet>
+            <xtce:IntegerArgumentType name="CCSDSTCPacketVersionType" signed="false" initialValue="0">
+                <xtce:UnitSet/>
+                <xtce:IntegerDataEncoding sizeInBits="3"/>
+            </xtce:IntegerArgumentType>
+            <xtce:EnumeratedArgumentType name="CCSDSTCPacketTypeType" initialValue="TC">
+                <xtce:UnitSet/>
+                <xtce:IntegerDataEncoding sizeInBits="1" encoding="unsigned"/>
+                <xtce:EnumerationList>
+                    <xtce:Enumeration label="TM" value="0"/>
+                    <xtce:Enumeration label="TC" value="1"/>
+                </xtce:EnumerationList>
+            </xtce:EnumeratedArgumentType>
+            <xtce:BooleanArgumentType name="CCSDSTCSecHdrFlagType" zeroStringValue="NotPresent" oneStringValue="Present" initialValue="Present">
+                <xtce:UnitSet/>
+                <xtce:IntegerDataEncoding sizeInBits="1" encoding="unsigned"/>
+            </xtce:BooleanArgumentType>
+            <xtce:IntegerArgumentType name="CCSDSTCAPIDType" signed="false">
+                <xtce:UnitSet/>
+                <xtce:IntegerDataEncoding sizeInBits="11"/>
+            </xtce:IntegerArgumentType>
+            <xtce:AggregateArgumentType name="CCSDS_TC_Packet_ID_Type" shortDescription="CCSDS Header Packet ID fields for telecommands">
+                <xtce:MemberList>
+                    <xtce:Member name="Version" typeRef="CCSDSTCPacketVersionType"/>
+                    <xtce:Member name="Type" typeRef="CCSDSTCPacketTypeType"/>
+                    <xtce:Member name="SecHdrFlag" typeRef="CCSDSTCSecHdrFlagType"/>
+                    <xtce:Member name="APID" typeRef="CCSDSTCAPIDType"/>
+                </xtce:MemberList>
+            </xtce:AggregateArgumentType>
+            <xtce:EnumeratedArgumentType name="CCSDSTCSequenceFlagsType" initialValue="StandalonePacket" shortDescription="CCSDS packet sequence flags">
+                <xtce:UnitSet/>
+                <xtce:IntegerDataEncoding sizeInBits="2" encoding="unsigned"/>
+                <xtce:EnumerationList>
+                    <xtce:Enumeration label="ContinuationSegment" value="0"/>
+                    <xtce:Enumeration label="FirstSegment" value="1"/>
+                    <xtce:Enumeration label="LastSegment" value="2"/>
+                    <xtce:Enumeration label="StandalonePacket" value="3"/>
+                </xtce:EnumerationList>
+            </xtce:EnumeratedArgumentType>
+            <xtce:IntegerArgumentType name="CCSDSTCSequenceCountType" signed="false" shortDescription="CCSDS packet sequence count">
+                <xtce:UnitSet/>
+                <xtce:IntegerDataEncoding sizeInBits="14" encoding="unsigned"/>
+            </xtce:IntegerArgumentType>
+            <xtce:AggregateArgumentType name="CCSDS_TC_Packet_Sequence_Type" shortDescription="CCSDS Header Packet Sequence Control fields for telecommands">
+                <xtce:MemberList>
+                    <xtce:Member name="SeqFlags" typeRef="CCSDSTCSequenceFlagsType"/>
+                    <xtce:Member name="SeqCount" typeRef="CCSDSTCSequenceCountType"/>
+                </xtce:MemberList>
+            </xtce:AggregateArgumentType>
+            <xtce:IntegerArgumentType name="CCSDSTCPacketLengthType" signed="false" shortDescription="CCSDS Packet Length Field for telecommands">
+                <xtce:UnitSet/>
+                <xtce:IntegerDataEncoding sizeInBits="16" encoding="unsigned"/>
+            </xtce:IntegerArgumentType>
+
             <xtce:IntegerArgumentType name="PUSTCVersionType" signed="false" initialValue="1">
                 <xtce:UnitSet/>
                 <xtce:IntegerDataEncoding sizeInBits="4"/>
@@ -2928,16 +2990,17 @@ limitations under the License.
 		</xtce:ArgumentTypeSet>
 		<xtce:MetaCommandSet>
 			            <xtce:MetaCommand abstract="true" name="CCSDSTelecommandPacket">
+                <xtce:ArgumentList>
+                    <xtce:Argument name="tc_packet_id" argumentTypeRef="CCSDS_TC_Packet_ID_Type"/>
+                    <xtce:Argument name="tc_packet_sequence" argumentTypeRef="CCSDS_TC_Packet_Sequence_Type"/>
+                    <xtce:Argument name="tc_packet_length" argumentTypeRef="CCSDSTCPacketLengthType"/>
+                </xtce:ArgumentList>
                 <xtce:CommandContainer name="CCSDSTelecommandPacket">
-                    <xtce:EntryList/>
-                    <xtce:BaseContainer containerRef="CCSDSPacket">
-                        <xtce:RestrictionCriteria>
-                            <xtce:ComparisonList>
-                                <xtce:Comparison value="0" parameterRef="CCSDS_Packet_ID/Version"/>
-                                <xtce:Comparison value="TC" parameterRef="CCSDS_Packet_ID/Type"/>
-                            </xtce:ComparisonList>
-                        </xtce:RestrictionCriteria>
-                    </xtce:BaseContainer>
+                    <xtce:EntryList>
+                        <xtce:ArgumentRefEntry argumentRef="tc_packet_id"/>
+                        <xtce:ArgumentRefEntry argumentRef="tc_packet_sequence"/>
+                        <xtce:ArgumentRefEntry argumentRef="tc_packet_length"/>
+                    </xtce:EntryList>
                 </xtce:CommandContainer>
             </xtce:MetaCommand>
             <xtce:MetaCommand abstract="true" name="CCSDSPUSTelecommandPacket">
@@ -2957,11 +3020,7 @@ limitations under the License.
                         <xtce:ArgumentRefEntry argumentRef="subservice"/>
                         <xtce:ArgumentRefEntry argumentRef="source_id"/>
                     </xtce:EntryList>
-                    <xtce:BaseContainer containerRef="CCSDSTelecommandPacket">
-                        <xtce:RestrictionCriteria>
-                            <xtce:Comparison parameterRef="CCSDS_Packet_ID/SecHdrFlag" value="Present"/>
-                        </xtce:RestrictionCriteria>
-                    </xtce:BaseContainer>
+                    <xtce:BaseContainer containerRef="CCSDSTelecommandPacket"/>
                 </xtce:CommandContainer>
             </xtce:MetaCommand>
 

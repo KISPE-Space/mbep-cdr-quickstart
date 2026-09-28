@@ -11,3 +11,7 @@
 
 # Docker logs for CI
 docker/all.log
+
+# Built project
+mbep-cdr-yamcs-0.0.1-CDR/
+scripts/satll-simulator/build/

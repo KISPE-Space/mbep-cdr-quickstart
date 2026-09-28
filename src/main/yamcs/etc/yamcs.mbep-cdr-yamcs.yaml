@@ -20,13 +20,41 @@ services:
         enabled: true
   - class: org.yamcs.plists.ParameterListService
   - class: org.yamcs.timeline.TimelineService
+  # CFDP
+  - class: org.yamcs.cfdp.CfdpService
+    name: cfdp0
+    args:
+      sequenceNrLength: 4
+      maxPduSize: 512
+      incomingBucket: "cfdpDown"
+      eofAckTimeout: 3000
+      eofAckLimit: 5
+      sleepBetweenPdus: 100
+      inStream: "cfdp_in"     # where incoming PDUs (from spacecraft) are read
+      outStream: "cfdp_out"   # where outgoing PDUs (to spacecraft) are written
+      localEntities:
+        - name: ground
+          id: 1
+          bucket: bucket1
+      remoteEntities:
+        - name: spacecraft
+          id: 2
 
 dataLinks:
   - name: udp-in
     class: org.yamcs.tctm.UdpTmDataLink
     stream: tm_realtime
     port: 10011
-    packetPreprocessorClassName: com.example.myproject.MyPacketPreprocessor
+    # packetPreprocessorClassName: com.example.myproject.MyPacketPreprocessor
+    maxLength: 1500
+
+    packetPreprocessorClassName: org.yamcs.tctm.GenericPacketPreprocessor
+    packetPreprocessorArgs:
+      timestampOffset: -1
+      seqCountOffset: -1
+      errorDetection:
+        type: CRC-16-CCIIT
+        initialValue: 0xFFFF
 
   - name: udp-out
     class: org.yamcs.tctm.UdpTcDataLink
@@ -34,6 +62,68 @@ dataLinks:
     host: localhost
     port: 10022
     # commandPostprocessorClassName: com.example.myproject.MyCommandPostprocessor
+
+#TM Datalink
+  - name: tm_realtime
+    class: org.yamcs.tctm.ccsds.UdpTmFrameLink
+    port: 10033
+    frameType: "TM"
+    spacecraftId: 0x69
+    frameLength: 40
+    insertZoneLength: 0
+    errorDetection: CRC16
+    clcwStream: clcw
+    badFrameStream: invalid_tm_stream
+    virtualChannels:
+      - vcId: 0
+        service: "PACKET"
+        maxPacketLength: 1500
+        packetPreprocessorClassName: org.yamcs.pus.PusPacketPreprocessor
+        packetPreprocessorArgs:
+          errorDetection:
+            type: CRC-16-CCIIT
+            initialValue: 0xFFFF
+        stream: "tm_realtime"
+      - vcId: 1
+        service: "PACKET"       # auto-detects CCSDS encapsulation packets carrying CFDP PDUs
+        maxPacketLength: 1500
+        packetPreprocessorClassName: org.yamcs.tctm.GenericPacketPreprocessor
+        packetPreprocessorArgs:
+          timestampOffset: -1
+          seqCountOffset: -1
+          errorDetection:
+            type: CRC-16-CCIIT
+            initialValue: 0xFFFF
+        stream: "tm_vc1"
+
+  - name: tc_realtime
+    class: org.yamcs.tctm.ccsds.UdpTcFrameLink
+
+    host: localhost
+    port: 10044
+    spacecraftId: 0x69
+    maxFrameLength: 2000
+    errorDetection: CRC16
+
+    virtualChannels:
+
+      - vcId: 0
+        service: "PACKET"
+        commandPostprocessorClassName: org.yamcs.pus.PusCommandPostprocessor
+        commandPostprocessorArgs:
+          errorDetection:
+            type: CRC-16-CCIIT
+            initialValue: 0xFFFF
+        stream: "tc_realtime"
+
+      - vcId: 1
+        service: "PACKET"
+        commandPostprocessorClassName: org.yamcs.tctm.GenericCommandPostprocessor
+        commandPostprocessorArgs:
+          errorDetection:
+            type: CRC-16-CCIIT
+            initialValue: 0xFFFF
+        stream: "tc_realtime"
 
 mdb:
   # Configuration of the active loaders
@@ -48,10 +138,16 @@ streamConfig:
     - name: "tm_realtime"
       processor: "realtime"
     - name: "tm_dump"
+    - name: "tm_vc1"
+
   cmdHist: ["cmdhist_realtime", "cmdhist_dump"]
   event: ["events_realtime", "events_dump"]
   param: ["pp_realtime", "pp_dump", "sys_param", "proc_param"]
   parameterAlarm: ["alarms_realtime"]
+
   tc:
     - name: "tc_realtime"
       processor: "realtime"
+
+  sqlFile: "etc/extra_streams.sql"
+

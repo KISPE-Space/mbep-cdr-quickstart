@@ -4,7 +4,7 @@
 
   <groupId>com.example</groupId>
   <artifactId>mbep-cdr-yamcs</artifactId>
-  <version>0.0.1-CDR</version>
+  <version>0.0.2-CDR</version>
   <packaging>jar</packaging>
 
   <name>mbep-cdr-yamcs</name>
